@@ -12,4 +12,11 @@ def current_weather(longitude :float, latitude: float):
     response = requests.get(url, params=params)
 
     data = response.json()
-    return data
+
+    return {
+        "temperature": data["current"]["temperature_2m"],
+        "apparent_temperature": data["current"]["apparent_temperature"],
+        "wind_speed": data["current"]["wind_speed_10m"],
+        "weather_code": data["current"]["weather_code"]       
+    }
+    
