@@ -1,11 +1,18 @@
 import requests
+from fastapi import HTTPException
 
 def search_city_service(name: str):
     url = "https://geocoding-api.open-meteo.com/v1/search"
     params = {"name": name}
 
-    response = requests.get(url, params=params)
-
+    try:
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
+    except requests.exceptions.Timeout:
+        raise HTTPException(status_code=504, detail="Open-Meteo request timed out")
+    except requests.exceptions.HTTPError:
+        raise HTTPException(status_code=502, detail="Error")
+        
     data = response.json()    
 
     results = data.get("results", [])
